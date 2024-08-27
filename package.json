@@ -1,0 +1,32 @@
+{
+  "name": "mern2306backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taufik69/mern2306Backend.git"
+  },
+  "author": "MERN 2306",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/taufik69/mern2306Backend/issues"
+  },
+  "homepage": "https://github.com/taufik69/mern2306Backend#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0",
+    "mongoose": "^8.5.4",
+    "nodemon": "^3.1.4",
+    "prettier": "^3.3.3"
+  },
+  "devDependencies": {
+    "chalk": "^3.0.0"
+  }
+}
