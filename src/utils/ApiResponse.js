@@ -5,6 +5,8 @@ class ApiResponse {
         this.statusCode = statusCode,
         this.error = error,
         this.message = message
+
+        // kalsdjf
     }
 }
 
