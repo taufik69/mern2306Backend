@@ -1,10 +1,7 @@
 const express = require('express');
 const {Router} = express;
-const {ApiResponse} = require('../../utils/ApiResponse.js')
+const {CreateUser} = require('../../Controller/User.controller.js')
 const _  = Router();
-_.route("/getname").get((req,res)=> {
-    res.status(200).json(new ApiResponse(true,"mern 2307" , false , "Everyting is fair and love and war"))
-    
-})
+_.route("/registration").post(CreateUser);
 
 module.exports = _
