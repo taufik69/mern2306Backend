@@ -2,6 +2,7 @@ const { ApiError } = require('../utils/ApiError.js');
 const { ApiResponse } = require('../utils/ApiResponse.js')
 const { asyncHandeler } = require('../utils/asynhandeler.js');
 const { usermodel } = require('../Model/User.model.js');
+const { passwordChecker, EamilChecker } = require('../utils/Checker.js')
 /**
  * todo: createUser controller implement
  * @param {{ req.body }} req 
@@ -19,8 +20,8 @@ const CreateUser = asyncHandeler(async (req, res) => {
         if (!LastName) {
             return res.status(404).json(new ApiError(false, null, 400, `LastName Missing !!`))
         }
-        if (!Email_Adress) {
-            return res.status(404).json(new ApiError(false, null, 400, `Email_Adress Missing !!`))
+        if (!Email_Adress || !EamilChecker(Email_Adress)) {
+            return res.status(404).json(new ApiError(false, null, 400, `Email_Adress Missing or Invalid Eamil  !!`))
         }
         if (!Telephone) {
             return res.status(404).json(new ApiError(false, null, 400, `Telephone Missing !!`))
@@ -31,8 +32,8 @@ const CreateUser = asyncHandeler(async (req, res) => {
         if (!City) {
             return res.status(404).json(new ApiError(false, null, 400, `City Missing !!`))
         }
-        if (!Password) {
-            return res.status(404).json(new ApiError(false, null, 400, `Password Missing !!`))
+        if (!Password || !passwordChecker(Password)) {
+            return res.status(404).json(new ApiError(false, null, 400, `Password Missing or Minimum eight characters, at least one uppercase letter, one lowercase letter and one number !!`))
         }
 
 
