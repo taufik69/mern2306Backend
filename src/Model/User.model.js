@@ -55,6 +55,10 @@ const UserSchema = new Schema(
     OTP: {
       type: Number,
     },
+    userIsVerifid: {
+      type: Boolean,
+      default: false,
+    },
     role: {
       type: String,
       enum: ["admin", "user", "merchant"],

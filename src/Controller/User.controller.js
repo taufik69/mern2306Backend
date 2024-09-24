@@ -4,6 +4,9 @@ const { asyncHandeler } = require("../utils/asynhandeler.js");
 const { usermodel } = require("../Model/User.model.js");
 const { bcryptPassword, generateAccesToken } = require("../helper/helper.js");
 const { passwordChecker, EamilChecker } = require("../utils/Checker.js");
+const { sendMail } = require("../utils/SendMail.js");
+const { MakeOtp } = require("../helper/OtpGenertator.js");
+const nodemailer = require("nodemailer");
 /**
  * todo: createUser controller implement
  * @param {{ req.body }} req
@@ -111,10 +114,13 @@ const CreateUser = asyncHandeler(async (req, res) => {
 
     // create accessToken
     let accessToken = await generateAccesToken(Email_Adress, Telephone);
+    // send a user email
+    const otp = await MakeOtp();
+    const mailInfo = await sendMail(FirstName, Email_Adress, otp);
 
-    if (Users || accessToken) {
+    if (Users || accessToken || mailInfo) {
       // now set the token in database
-      const setToken = await usermodel.findOneAndUpdate(
+      await usermodel.findOneAndUpdate(
         { _id: Users._id },
         {
           $set: { Token: accessToken },
@@ -123,9 +129,23 @@ const CreateUser = asyncHandeler(async (req, res) => {
           new: true,
         }
       );
+
+      // now set the opt
+      await usermodel.findOneAndUpdate(
+        {
+          _id: Users._id,
+        },
+        {
+          $set: { OTP: otp },
+        },
+        {
+          new: true,
+        }
+      );
+
       const recentCreateUser = await usermodel
         .find({ $or: [{ FirstName }, { Email_Adress }] })
-        .select("-Password -_id");
+        .select("-Password ");
       return res
         .status(200)
         .cookie("Token", accessToken, options)
