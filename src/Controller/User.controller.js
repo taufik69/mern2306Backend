@@ -2,7 +2,7 @@ const { ApiError } = require("../utils/ApiError.js");
 const { ApiResponse } = require("../utils/ApiResponse.js");
 const { asyncHandeler } = require("../utils/asynhandeler.js");
 const { usermodel } = require("../Model/User.model.js");
-const { bcryptPassword, generateAccesToken } = require("../helper/helper.js");
+const { bcryptPassword, generateAccesToken, decodeHashPassword } = require("../helper/helper.js");
 const { passwordChecker, EamilChecker } = require("../utils/Checker.js");
 const { sendMail } = require("../utils/SendMail.js");
 const { MakeOtp } = require("../helper/OtpGenertator.js");
@@ -174,4 +174,71 @@ const CreateUser = asyncHandeler(async (req, res) => {
   }
 });
 
-module.exports = { CreateUser };
+// login controller
+const loginCrontroller = async (req, res) => {
+  try {
+    const { Email_Adress, Password } = req.body
+
+    if (!Email_Adress || !EamilChecker(Email_Adress)) {
+      return res
+        .status(404)
+        .json(
+          new ApiError(
+            false,
+            null,
+            400,
+            `Email_Adress Missing or Invalid Eamil  !!`
+          )
+        );
+    }
+
+    if (!Password || !passwordChecker(Password)) {
+      return res
+        .status(404)
+        .json(
+          new ApiError(
+            false,
+            null,
+            400,
+            `Password Missing or Minimum eight characters, at least one uppercase letter, one lowercase letter and one number !!`
+          )
+        );
+    }
+
+
+    const findUser = await usermodel.findOne({ Email_Adress: Email_Adress })
+
+    const userPasswordIsValid = decodeHashPassword(Password, findUser?.Password);
+    if (userPasswordIsValid) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            true,
+            {
+              FirstName: findUser?.FirstName
+            },
+            200,
+            null,
+            "Login sucesfull !!"
+          )
+        );
+    }
+
+
+
+  } catch (error) {
+    return res
+      .status(404)
+      .json(
+        new ApiError(
+          false,
+          null,
+          400,
+          `Login Controller Error:  ${error} !!`
+        )
+      );
+  }
+}
+
+module.exports = { CreateUser, loginCrontroller };
