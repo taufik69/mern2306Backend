@@ -11,16 +11,14 @@ const bcryptPassword = async (password) => {
 
 // encoding password
 const decodeHashPassword = async (plainPassword, encryptedPassword) => {
-  const passwordResult = await bcrypt.compare(plainPassword, encryptedPassword)
+  const passwordResult = await bcrypt.compare(plainPassword, encryptedPassword);
   return passwordResult;
+};
 
-}
-
-const generateAccesToken = async (Email_Adress, Telephone) => {
+const generateAccesToken = async (Email_Adress) => {
   const AccessToken = await jwt.sign(
     {
       Email_Adress,
-      Telephone,
     },
     process.env.ACCCESS_TOKEN_SCCRECT,
     { expiresIn: process.env.ACCCESS_TOKEN_EXPIRAY }
