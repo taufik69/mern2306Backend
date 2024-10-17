@@ -1,6 +1,8 @@
 const { ApiError } = require("../utils/ApiError.js");
 const { ApiResponse } = require("../utils/ApiResponse.js");
-const categoryModel = require('../Model/category.model.js')
+const categoryModel = require('../Model/category.model.js');
+const { usermodel } = require("../Model/User.model.js");
+const { EamilChecker } = require("../utils/Checker.js");
 const createCatagoryController = async (req, res) => {
     try {
 
@@ -157,8 +159,80 @@ const getSingleCategory = async (req, res) => {
 
 const addprovedCatagory = async (req, res) => {
     try {
-        const { email } = req.body;
-        console.log(email);
+        const { email, categoryId } = req.body;
+        if (!email || !categoryId) {
+            return res
+                .status(404)
+                .json(
+                    new ApiError(
+                        false,
+                        null,
+                        400,
+                        `Category approved credintail missing !!`
+                    )
+                );
+        }
+
+        if (!EamilChecker(email)) {
+            return res
+                .status(404)
+                .json(
+                    new ApiError(
+                        false,
+                        null,
+                        400,
+                        `Email or Catagory Name not Valid !!`
+                    )
+                );
+        }
+        // search the database and find one this email owner is an admin ?
+        const searchUser = await usermodel.findOne({ Email_Adress: email })
+
+        if (searchUser?.role !== "admin") {
+            return res
+                .status(404)
+                .json(
+                    new ApiError(
+                        false,
+                        null,
+                        400,
+                        `Only Admin Can approve Category !!`
+                    )
+                );
+        }
+
+        // check is already has a catagory in database
+        const findCategory = await categoryModel.findById(categoryId).select('-description');
+        findCategory.isActive = true;
+        findCategory.save()
+        if (findCategory) {
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        true,
+                        findCategory,
+                        200,
+                        null,
+                        "Category Approved  sucesfull"
+                    )
+                );
+        } else {
+            return res
+                .status(501)
+                .json(
+                    new ApiError(
+                        false,
+                        null,
+                        501,
+                        `Category Not found !!`
+                    )
+                );
+        }
+
+
+
+
 
     } catch (error) {
         return res
@@ -173,4 +247,4 @@ const addprovedCatagory = async (req, res) => {
             );
     }
 }
-module.exports = { createCatagoryController, getAllcategoryController, getSingleCategory }
+module.exports = { createCatagoryController, getAllcategoryController, getSingleCategory, addprovedCatagory }
