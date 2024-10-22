@@ -152,4 +152,47 @@ const deleteSubCategory = async (req, res) => {
     }
 }
 
-module.exports = { createSubCategory, getAllSubCategory, deleteSubCategory }
+// get a single subcategory 
+const singleSubCategory = async (req, res) => {
+    try {
+        const { id } = req.params
+        const singleSubCategory = await subCategoryModel.findById(id).populate("category");
+        if (singleSubCategory) {
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        true,
+                        singleSubCategory,
+                        200,
+                        null,
+                        "Single SubCategory  retrived sucesfully"
+                    )
+                );
+        } else {
+            return res
+                .status(404)
+                .json(
+                    new ApiError(
+                        false,
+                        null,
+                        400,
+                        `sub Category Not Found !!`
+                    )
+                );
+        }
+    } catch (error) {
+        return res
+            .status(501)
+            .json(
+                new ApiError(
+                    false,
+                    null,
+                    501,
+                    `Delete SubCategory  Error:  ${error} !!`
+                )
+            );
+    }
+}
+
+module.exports = { createSubCategory, getAllSubCategory, deleteSubCategory, singleSubCategory }
