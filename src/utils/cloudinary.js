@@ -18,7 +18,7 @@ const uploadCloudinary = async (localfilePath = 'public\\temp\\code.png') => {
                 localfilePath || 'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
             }
             )
-        console.log(uploadResult);
+
 
         // delte a temp image fdile
         fs.unlinkSync(`${localfilePath}`, (err) => {
@@ -26,10 +26,24 @@ const uploadCloudinary = async (localfilePath = 'public\\temp\\code.png') => {
                 console.log('image unlinksyc error', err)
             }
         })
+
+        return uploadResult
     } catch (error) {
         console.log("From Cloudinary upoloader function errro: ", error);
 
     }
 }
+
+// delte image from 
+const deleteCloudinaryAssets = async (imagePath) => {
+    try {
+        cloudinary.v2.api
+            .delete_resources(['tqmkggkjlicafnpcrcnh'],
+                { type: 'upload', resource_type: 'image' })
+    } catch (error) {
+        console.log("From Cloudinary delete function error: ", error);
+    }
+}
+
 
 module.exports = { uploadCloudinary }
