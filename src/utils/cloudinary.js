@@ -10,24 +10,29 @@ cloudinary.config({
     api_secret: process.env.API_SECRET
 });
 
+
 const uploadCloudinary = async (localfilePath = 'public\\temp\\code.png') => {
+   
     // Upload an image
     try {
-        const uploadResult = await cloudinary.uploader
+        let SecureLink =[]
+        for(let imagePath of localfilePath){
+            const uploadResult = await cloudinary.uploader
             .upload(
-                localfilePath || 'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
+                imagePath?.path || 'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
             }
             )
-
-
         // delte a temp image fdile
-        fs.unlinkSync(`${localfilePath}`, (err) => {
+        fs.unlinkSync(`${imagePath?.path}`, (err) => {
             if (err) {
                 console.log('image unlinksyc error', err)
             }
         })
-
-        return uploadResult
+        SecureLink.push(uploadResult?.secure_url);
+        }
+      return SecureLink
+   
+       
     } catch (error) {
         console.log("From Cloudinary upoloader function errro: ", error);
 
@@ -37,13 +42,21 @@ const uploadCloudinary = async (localfilePath = 'public\\temp\\code.png') => {
 // delte image from 
 const deleteCloudinaryAssets = async (imagePath) => {
     try {
-        cloudinary.v2.api
-            .delete_resources(['tqmkggkjlicafnpcrcnh'],
+        
+        for(let coludinaryName of imagePath){
+            const allArr =(coludinaryName.split('/'));
+            const cloudImagename =(allArr[allArr?.length -1].split('.')[0]);
+            const deleteItem = await cloudinary.api
+            .delete_resources(cloudImagename ||'dpkks1jq07ehurbjhm6u',
                 { type: 'upload', resource_type: 'image' })
+                
+        }
+        
+        
     } catch (error) {
         console.log("From Cloudinary delete function error: ", error);
     }
 }
 
 
-module.exports = { uploadCloudinary }
+module.exports = { uploadCloudinary ,deleteCloudinaryAssets}

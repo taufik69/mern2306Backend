@@ -49,10 +49,9 @@ const productSchema = new Schema({
         ref: "store",
         required: true,
     },
-    image: {
+    image:[ {
         type: String,
-
-    },
+    }],
 
 
 }, {
