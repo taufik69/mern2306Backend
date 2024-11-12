@@ -1,7 +1,7 @@
 const { ApiError } = require("../utils/ApiError.js");
 const { ApiResponse } = require("../utils/ApiResponse.js");
 const productModel = require('../Model/product.model.js');
-const { uploadCloudinary  ,deleteCloudinaryAssets} = require("../utils/cloudinary.js");
+const { uploadCloudinary, deleteCloudinaryAssets } = require("../utils/cloudinary.js");
 const NodeCache = require("node-cache");
 const myCache = new NodeCache();
 // upload product controller
@@ -28,8 +28,8 @@ const createProduct = async (req, res) => {
 
         }
         const image = req.files?.image;
-       
-        
+
+
         if (!image) {
             return res
                 .status(404)
@@ -56,14 +56,17 @@ const createProduct = async (req, res) => {
                 );
         }
         const imageInfo = await uploadCloudinary(image);
-       
+
         const saveProduct = await new productModel({
             ...req.body,
             image: [...imageInfo]
-        }).save()
+        }).save();
+
         if (saveProduct) {
             // delte the previous cache
-            myCache.del('allproduct')
+            const value = myCache.del('allproduct');
+            console.log("deleted cached value ", value);
+
             return res
                 .status(200)
                 .json(
@@ -104,9 +107,10 @@ const createProduct = async (req, res) => {
 // get all product controller
 const getAllProducts = async (req, res) => {
     try {
+
         let value = myCache.get("allproduct");
         if (value === undefined) {
-            const allProducts = await productModel.find({}).populate(["category" , "subcategory" ,"owner" , "storeid"]);
+            const allProducts = await productModel.find({}).populate(["category", "subcategory", "owner", "storeid"]);
 
             if (allProducts) {
                 // cached the all produt
@@ -169,16 +173,16 @@ const updateProduct = async (req, res) => {
         const { id } = req.params;
         const image = req.files?.image;
         let updatedProduct = await productModel.findById(id);
-        let updateProductObj= {}
-        if(image){
-           await deleteCloudinaryAssets(updatedProduct?.image);
-           const imageUrl =  await uploadCloudinary(image)
+        let updateProductObj = {}
+        if (image) {
+            await deleteCloudinaryAssets(updatedProduct?.image);
+            const imageUrl = await uploadCloudinary(image)
             updateProductObj = { ...req.body, image: imageUrl };
-          
-        }else{
-            updateProductObj = {...req.body}
+
+        } else {
+            updateProductObj = { ...req.body }
         }
-        const updatedProdut =  await productModel.findOneAndUpdate({_id:id } , {...updateProductObj } , {new:true})
+        const updatedProdut = await productModel.findOneAndUpdate({ _id: id }, { ...updateProductObj }, { new: true })
         if (updatedProdut) {
             return res
                 .status(200)
@@ -219,17 +223,17 @@ const updateProduct = async (req, res) => {
 }
 
 // get a singleproduct controller 
-const singleProduct = async(req,res)=> {
+const singleProduct = async (req, res) => {
     try {
-        const {id} = req.params;
-        const prouduct = await productModel.findById(id).populate(["category" , "subcategory" , "owner" , "storeid"]);
-        if(prouduct){
+        const { id } = req.params;
+        const prouduct = await productModel.findById(id).populate(["category", "subcategory", "owner", "storeid"]);
+        if (prouduct) {
             return res
                 .status(200)
                 .json(
                     new ApiResponse(
                         true,
-                        prouduct ,
+                        prouduct,
                         200,
                         null,
                         "Product Create    sucesfull"
@@ -250,4 +254,49 @@ const singleProduct = async(req,res)=> {
     }
 }
 
-module.exports = { createProduct, getAllProducts, updateProduct ,singleProduct }
+// search product 
+const searchProduct = async (req, res) => {
+    try {
+        const { name } = req.query
+        const serchResult = await productModel.find({ name: name }).populate(["category", "subcategory ", "owner", "storeid"]);
+
+        if (serchResult?.length) {
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        true,
+                        serchResult,
+                        200,
+                        null,
+                        "Product Fetch sucesfull"
+                    )
+                );
+        }
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    true,
+                    null,
+                    200,
+                    null,
+                    "Product Not Found"
+                )
+            );
+
+    } catch (error) {
+        return res
+            .status(501)
+            .json(
+                new ApiError(
+                    false,
+                    null,
+                    400,
+                    `Search product product  Controller Error:  ${error.code} !!`
+                )
+            );
+    }
+}
+
+module.exports = { createProduct, getAllProducts, updateProduct, singleProduct, searchProduct }
