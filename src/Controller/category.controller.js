@@ -75,7 +75,7 @@ const createCatagoryController = async (req, res) => {
 
 const getAllcategoryController = async (req, res) => {
     try {
-        const allCategory = await categoryModel.find({});
+        const allCategory = (await categoryModel.find({}).populate('subcategory'));
         if (allCategory) {
             return res
                 .status(200)
@@ -85,7 +85,7 @@ const getAllcategoryController = async (req, res) => {
                         allCategory,
                         200,
                         null,
-                        "Registration  sucesfull"
+                        "Categegory Retrive   sucesfull"
                     )
                 );
         } else {
