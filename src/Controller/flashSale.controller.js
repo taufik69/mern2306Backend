@@ -26,7 +26,10 @@ const createFlashSale = async (req, res) => {
     }
 
     // save the information of database
-    const saveFlashSale = await flashSaleModel.create({ productId, offerDate });
+    const saveFlashSale = await flashSaleModel.create({
+      productId,
+      offerDate: offerDate || 1,
+    });
     if (saveFlashSale) {
       return res
         .status(200)
@@ -191,7 +194,7 @@ const GetSingleFlashSaleItem = async (req, res) => {
     const { id } = req.params;
     const SingleFlashSaleItem = await flashSaleModel
       .findOne({ _id: id })
-      .populate({ path: "productId", populate: "subcategory category" ,});
+      .populate({ path: "productId", populate: "subcategory category" });
 
     if (SingleFlashSaleItem) {
       return res
