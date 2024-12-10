@@ -8,6 +8,11 @@ const flashSaleSchema = new Schema(
       ref: "product",
       required: true,
     },
+
+    timeOffer: {
+      type: Types.ObjectId,
+      ref: "timeOffer",
+    },
   },
   {
     timestamps: true,

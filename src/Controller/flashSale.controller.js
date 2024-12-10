@@ -6,8 +6,8 @@ const req = require("express/lib/request.js");
 // create a flashSale
 const createFlashSale = async (req, res) => {
   try {
-    const { productId, offerDate } = req.body;
-    if (!productId || !offerDate) {
+    const { productId, timeOffer } = req.body;
+    if (!productId || !timeOffer) {
       return res
         .status(404)
         .json(
@@ -28,7 +28,7 @@ const createFlashSale = async (req, res) => {
     // save the information of database
     const saveFlashSale = await flashSaleModel.create({
       productId,
-      offerDate: offerDate || 1,
+      timeOffer: timeOffer || 1,
     });
     if (saveFlashSale) {
       return res
@@ -72,6 +72,7 @@ const getAllFlashSale = async (req, res) => {
         // populate: "category",
         select: "-description -category -subcategory -review -owner",
       })
+      .populate("timeOffer")
       .lean();
 
     if (allFlashSale?.length) {
