@@ -3,10 +3,13 @@ const { ApiResponse } = require("../utils/ApiResponse.js");
 const productModel = require('../Model/product.model.js');
 const { uploadCloudinary, deleteCloudinaryAssets } = require("../utils/cloudinary.js");
 const NodeCache = require("node-cache");
+const categoryModel = require('../Model/category.model.js')
 const myCache = new NodeCache();
 // upload product controller
 const createProduct = async (req, res) => {
     try {
+
+    
         // const { name, description, category, price, discountPrice, rating, review, owner, storeid } = req.body;
         const nonRequiredItem = ["discountPrice", "rating", "review", "subcategory"];
         for (let key in req.body) {
@@ -63,6 +66,10 @@ const createProduct = async (req, res) => {
         }).save();
 
         if (saveProduct) {
+            // now push the product id into category model
+            const category = await categoryModel.findById(req.body.category);
+            category.product.push(saveProduct._id);
+            await category.save()
             // delte the previous cache
             const value = myCache.del('allproduct');
             console.log("deleted cached value ", value);
@@ -299,4 +306,47 @@ const searchProduct = async (req, res) => {
     }
 }
 
-module.exports = { createProduct, getAllProducts, updateProduct, singleProduct, searchProduct }
+// delte product controller
+const delteproduct = async (req,res)=> {
+    try {
+        const {id} = req.params;
+        const deltedItem = await productModel.findOneAndDelete({_id: id});
+     
+  
+        if(deltedItem){
+            // cloudinary iamge delete
+           const deltedCloudinaryItem =  await deleteCloudinaryAssets(deltedItem?.image);
+           
+           
+        //    serch the category
+            const category = await categoryModel.findById(deltedItem.category);
+            category.product.pull(deltedItem._id)
+            await category.save()
+            return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    true,
+                    deltedItem,
+                    200,
+                    null,
+                    "Product Delted Sucessfull"
+                )
+            );
+        }
+        
+    } catch (error) {
+        return res
+        .status(501)
+        .json(
+            new ApiError(
+                false,
+                null,
+                400,
+                `delte product   Controller Error:  ${error} !!`
+            )
+        );
+    }
+}
+
+module.exports = { createProduct, getAllProducts, updateProduct, singleProduct, searchProduct  ,delteproduct}

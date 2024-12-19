@@ -122,7 +122,9 @@ const getAllcategoryController = async (req, res) => {
 const getSingleCategory = async (req, res) => {
     try {
         const { id } = req.params;
-        const searchItem = await categoryModel.findById({ _id: id });
+        const searchItem = await categoryModel.findById({ _id: id }).populate({
+            path:"product"
+        });
         if (!searchItem) {
             return null
         }

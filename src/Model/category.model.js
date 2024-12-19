@@ -13,10 +13,10 @@ const categorySchema = new Schema({
         required: [true, "Description  required"],
         trim: true
     },
-    product: {
+    product:[ {
         type: Schema.Types.ObjectId,
         ref: "product"
-    },
+    }],
     isActive: {
         type: Boolean,
         default: false
