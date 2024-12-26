@@ -23,18 +23,18 @@ const UserSchema = new Schema(
 
     Telephone: {
       type: String,
-      required: [true, "TelePhone Number Missing !!"],
+     
     },
     Adress1: {
       type: String,
-      required: [true, "Adress1 Missing !!"],
+    
     },
     Adress2: {
       type: String,
     },
     City: {
       type: String,
-      required: [true, "City Missing !!"],
+    
     },
     PostCode: {
       type: Number,

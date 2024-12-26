@@ -22,25 +22,13 @@ const options = {
 const CreateUser = asyncHandeler(async (req, res) => {
   // send information into database
   try {
-    const {
-      FirstName,
-      LastName,
-      Email_Adress,
-      Telephone,
-      Adress1,
-      City,
-      Password,
-    } = req?.body;
+    const { FirstName, Email_Adress, Password } = req?.body;
     if (!FirstName) {
       return res
         .status(404)
         .json(new ApiError(false, null, 400, `FirstName Missing !!`));
     }
-    if (!LastName) {
-      return res
-        .status(404)
-        .json(new ApiError(false, null, 400, `LastName Missing !!`));
-    }
+
     if (!Email_Adress || !EamilChecker(Email_Adress)) {
       return res
         .status(404)
@@ -52,21 +40,6 @@ const CreateUser = asyncHandeler(async (req, res) => {
             `Email_Adress Missing or Invalid Eamil  !!`
           )
         );
-    }
-    if (!Telephone) {
-      return res
-        .status(404)
-        .json(new ApiError(false, null, 400, `Telephone Missing !!`));
-    }
-    if (!Adress1) {
-      return res
-        .status(404)
-        .json(new ApiError(false, null, 400, `Adress1 Missing !!`));
-    }
-    if (!City) {
-      return res
-        .status(404)
-        .json(new ApiError(false, null, 400, `City Missing !!`));
     }
     if (!Password || !passwordChecker(Password)) {
       return res
@@ -105,11 +78,7 @@ const CreateUser = asyncHandeler(async (req, res) => {
     // create a new users in database
     const Users = await new usermodel({
       FirstName,
-      LastName,
       Email_Adress,
-      Telephone,
-      Adress1,
-      City,
       Password: hasPassword,
     }).save();
 
