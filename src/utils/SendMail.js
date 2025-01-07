@@ -20,7 +20,7 @@ const sendMail = async (
       from: process.env.HOST_MAIL,
       to: `${Email_Adress}`,
       subject: "MERN2306 Backend  👻",
-      html: MakeTemplate(FirstName, opt),
+      html: MakeTemplate(FirstName, opt, Email_Adress),
     });
 
     return info;

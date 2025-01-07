@@ -87,6 +87,7 @@ const CreateUser = asyncHandeler(async (req, res) => {
     // send a user email
     const otp = await MakeOtp();
     const mailInfo = await sendMail(FirstName, Email_Adress, otp);
+    console.log(mailInfo);
 
     if (Users || accessToken || mailInfo) {
       // now set the opt
