@@ -14,9 +14,10 @@ const { generateAccesToken } = require("../helper/helper.js");
  * @param {{  }} res
  */
 
+// Cookie options
 const options = {
-  httpOnly: true,
-  secure: true,
+  httpOnly: true, // Prevent client-side JavaScript access
+  secure: false, // Set to true if using HTTPS
 };
 
 const CreateUser = asyncHandeler(async (req, res) => {
@@ -177,12 +178,17 @@ const loginCrontroller = async (req, res) => {
     if (userPasswordIsValid) {
       return res
         .status(200)
-        .cookie("accesToken", token, options)
+        .cookie("Token", token, {
+          httpOnly: true,
+          secure: false, // Ensure HTTPS is used
+          sameSite: "None", // Allow cross-origin cookies
+        })
         .json(
           new ApiResponse(
             true,
             {
               FirstName: findUser?.FirstName,
+              token: `Bearer ${token}`,
             },
             200,
             null,
@@ -217,7 +223,7 @@ const optMatchController = async (req, res) => {
     }
 
     const checkEmailExistInDB = await usermodel.findOne({
-      $or: [{ Email_Adress: Email_Adress }, { OTP: OTP }],
+      $and: [{ OTP: OTP, Email_Adress: Email_Adress }],
     });
     if (checkEmailExistInDB) {
       checkEmailExistInDB.OTP = null;
@@ -226,6 +232,9 @@ const optMatchController = async (req, res) => {
         .status(200)
         .json(new ApiResponse(true, 200, null, "OTP Verified !!"));
     }
+    return res
+      .status(404)
+      .json(new ApiError(false, null, 400, `OTP Does not Match !!`));
   } catch (error) {
     return res
       .status(404)

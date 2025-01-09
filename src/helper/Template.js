@@ -52,7 +52,7 @@ const MakeTemplate = (FirstName, opt, Email_Adress) => {
 
     <p> Please enter it on the verification page.</p>
 
-    <a href=http://localhost:5173/verifyotp/${Email_Adress}  class="button">Verify Now</a>
+    <a href=http://localhost:5173/verifyotp/${Email_Adress} target ="_self" class="button">Verify Now</a>
 
     <p class="footer">If you did not request this OTP, please ignore this email.</p>
 </div>

@@ -6,9 +6,15 @@ const cors = require("cors");
 const app = express();
 
 // all middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"], // Your frontend's origin
+    credentials: true, // Allow credentials
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
+
 app.use(express.urlencoded({ extended: false }));
 app.use(AllRoutes);
 
