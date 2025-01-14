@@ -88,7 +88,6 @@ const CreateUser = asyncHandeler(async (req, res) => {
     // send a user email
     const otp = await MakeOtp();
     const mailInfo = await sendMail(FirstName, Email_Adress, otp);
-    console.log(mailInfo);
 
     if (Users || accessToken || mailInfo) {
       // now set the opt
@@ -173,7 +172,10 @@ const loginCrontroller = async (req, res) => {
     );
 
     // generate access token
-    const token = await generateAccesToken(Email_Adress);
+    const token = await generateAccesToken({
+      email: Email_Adress,
+      id: findUser._id,
+    });
 
     if (userPasswordIsValid) {
       return res

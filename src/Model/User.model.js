@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const { Schema } = mongoose;
 
 const UserSchema = new Schema(
@@ -23,18 +24,15 @@ const UserSchema = new Schema(
 
     Telephone: {
       type: String,
-     
     },
     Adress1: {
       type: String,
-    
     },
     Adress2: {
       type: String,
     },
     City: {
       type: String,
-    
     },
     PostCode: {
       type: Number,
@@ -73,6 +71,7 @@ const UserSchema = new Schema(
     avatar: {
       type: String,
     },
+    cartitem: [{ type: Schema.Types.ObjectId, ref: "cart" }],
   },
   { timestamps: true }
 );
