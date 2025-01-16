@@ -103,4 +103,165 @@ const allcartItem = async (req, res) => {
   }
 };
 
-module.exports = { addtoCart, allcartItem };
+// delte cart item
+const cartRemove = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const removeCartitem = await cartModel.findOneAndDelete({ _id: id });
+    if (!removeCartitem) {
+      return res
+        .status(501)
+        .json(new ApiError(false, null, 501, `Remove Cart Failed !!`));
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          true,
+          removeCartitem,
+          200,
+          null,
+          "add to cart delete  sucesfull"
+        )
+      );
+  } catch (error) {
+    return res
+      .status(501)
+      .json(
+        new ApiError(
+          false,
+          null,
+          501,
+          `Remove addtocart Controller Error:  ${error} !!`
+        )
+      );
+  }
+};
+
+// increment cart quantitiy
+const incrementCartItem = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const cart = await cartModel.findOne({ _id: id });
+    cart.quantity += 1;
+    await cart.save();
+    if (!cart) {
+      return res
+        .status(501)
+        .json(
+          new ApiError(false, null, 501, `Failed increment cartItem quantity!!`)
+        );
+    }
+    return res
+      .status(200)
+      .json(new ApiResponse(true, cart, 200, null, "cart item increment"));
+  } catch (error) {
+    return res
+      .status(501)
+      .json(
+        new ApiError(
+          false,
+          null,
+          501,
+          ` addtocart increment Controller Error:  ${error} !!`
+        )
+      );
+  }
+};
+
+const decrementCartItem = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const cart = await cartModel.findOne({ _id: id });
+    if (cart.quantity > 1) {
+      cart.quantity -= 1;
+      await cart.save();
+    }
+
+    if (!cart) {
+      return res
+        .status(501)
+        .json(
+          new ApiError(false, null, 501, `Failed increment cartItem quantity!!`)
+        );
+    }
+    return res
+      .status(200)
+      .json(new ApiResponse(true, cart, 200, null, "cart item increment"));
+  } catch (error) {
+    return res
+      .status(501)
+      .json(
+        new ApiError(
+          false,
+          null,
+          501,
+          ` addtocart increment Controller Error:  ${error} !!`
+        )
+      );
+  }
+};
+
+// user wise cart item
+const userCartItem = async (req, res) => {
+  try {
+    const userid = req.user;
+    const allcartItem = await cartModel
+      .find({ user: userid.id })
+      .populate(["product", "user"]);
+    if (!allcartItem) {
+      return res
+        .status(401)
+        .json(new ApiError(false, null, 501, `Cart Not Found !!`));
+    }
+    const subtotal = allcartItem?.reduce(
+      (initailValue, item) => {
+        const { quantity, product } = item;
+        initailValue.totalPrice += parseFloat(
+          product.price.replace(/,/gi, "") * quantity
+        );
+        initailValue.quantity += quantity;
+        return initailValue;
+      },
+      {
+        quantity: 0,
+        totalPrice: 0,
+      }
+    );
+
+    return res.status(200).json(
+      new ApiResponse(
+        true,
+        {
+          cart: allcartItem,
+          totalPrice: subtotal.totalPrice,
+          totalQuantity: subtotal.quantity,
+        },
+        200,
+        null,
+        "cart item increment"
+      )
+    );
+  } catch (error) {
+    return res
+      .status(501)
+      .json(
+        new ApiError(
+          false,
+          null,
+          501,
+          `user getAddtocart Controller Error:  ${error} !!`
+        )
+      );
+  }
+};
+
+module.exports = {
+  addtoCart,
+  allcartItem,
+  cartRemove,
+  incrementCartItem,
+  decrementCartItem,
+  userCartItem,
+};
