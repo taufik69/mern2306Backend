@@ -14,6 +14,7 @@ const bannerRoutes = require("./api/banner.ApiRoutes.js");
 const OfferDateRoutes = require("./api/OfferDate.apiRoutes.js");
 const cartRoutes = require("../Routes/api/cart.apiRoutes.js");
 const orderRoutes = require("../Routes/api/order.ApiRoutes.js");
+const paymentRoutes = require("../Routes/api/payment.apiRoutes.js");
 
 _.use(process.env.BASE_URL, authRoutes);
 _.use(process.env.BASE_URL, categoryRoutes);
@@ -27,6 +28,7 @@ _.use(process.env.BASE_URL, bannerRoutes);
 _.use(process.env.BASE_URL, OfferDateRoutes);
 _.use(process.env.BASE_URL, cartRoutes);
 _.use(process.env.BASE_URL, orderRoutes);
+_.use(process.env.BASE_URL, paymentRoutes);
 
 _.use(process.env.BASE_URL, (req, res) => {
   res.status(400).json(new ApiError(false, null, 404, "Api Routes InValid !!"));

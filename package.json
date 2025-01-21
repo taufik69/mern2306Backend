@@ -32,7 +32,8 @@
     "nodemailer": "^6.9.15",
     "nodemon": "^3.1.4",
     "number-generator": "^4.0.6",
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "sslcommerz-lts": "^1.1.0"
   },
   "devDependencies": {
     "chalk": "^3.0.0"
