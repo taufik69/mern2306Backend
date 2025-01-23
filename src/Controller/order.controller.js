@@ -64,6 +64,7 @@ const placeorder = async (req, res) => {
         total: totalPrice,
         vat: 2,
         payable: parseInt((totalPrice * 2) / 100),
+        order_id: saveOrder._id,
       }).save();
       res.json({ saveOrder: saveOrder });
     } else if (
@@ -129,6 +130,7 @@ const placeorder = async (req, res) => {
         tran_id: trans_id,
         vat: 2,
         payable: parseInt((totalPrice * 2) / 100),
+        order_id: saveOrder._id,
       }).save();
 
       return res

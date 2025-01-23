@@ -17,7 +17,7 @@ const { generateAccesToken } = require("../helper/helper.js");
 // Cookie options
 const options = {
   httpOnly: true, // Prevent client-side JavaScript access
-  secure: false, // Set to true if using HTTPS
+  secure: true, // Set to true if using HTTPS
 };
 
 const CreateUser = asyncHandeler(async (req, res) => {
@@ -182,8 +182,8 @@ const loginCrontroller = async (req, res) => {
         .status(200)
         .cookie("Token", token, {
           httpOnly: true,
-          secure: false, // Ensure HTTPS is used
-          sameSite: "None", // Allow cross-origin cookies
+          secure: true, // Ensure HTTPS is used
+          sameSite: true, // Allow cross-origin cookies
         })
         .json(
           new ApiResponse(
