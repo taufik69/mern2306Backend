@@ -6,7 +6,6 @@ const authGurad = async (req, res, next) => {
     const token = authorization?.split("Bearer")[1];
     // const token = removeBearer?.split("@")[1];
     const cookiesToken = cookie?.split("=")[1];
-    console.log("cookiesToken", cookiesToken);
 
     if (token) {
       const decoded = jwt.verify(
@@ -24,6 +23,7 @@ const authGurad = async (req, res, next) => {
         process.env.ACCCESS_TOKEN_SCCRECT
       );
       if (decoded) {
+        req.user = decoded;
         next();
       }
     }

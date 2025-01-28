@@ -6,6 +6,7 @@ const { ApiResponse } = require("../utils/ApiResponse.js");
 const addtoCart = async (req, res) => {
   try {
     const { product, quantity } = req.body;
+  
 
     // validation user input
     if (!product) {
