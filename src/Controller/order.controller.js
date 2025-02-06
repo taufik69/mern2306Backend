@@ -13,7 +13,7 @@ const placeorder = async (req, res) => {
   try {
     const { customerinfo, paymentinfo } = req.body;
     const userinfo = req.user;
-    const BearerToken = req.headers.authorization;
+    const BearerToken = req.headers.cookie.replace("Token=", "");
 
     const { phone, address1, city, district } = customerinfo;
     const { paymentmethod } = paymentinfo;
@@ -36,7 +36,7 @@ const placeorder = async (req, res) => {
     const response = await fetch(`${process.env.BACKEND_DOMAIN}/usercartitem`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: BearerToken,
+        Authorization: `Bearer ${BearerToken}`,
       },
     });
     const data = await response.json();
